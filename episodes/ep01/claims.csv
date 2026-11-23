@@ -5,3 +5,14 @@ id,claim,exact_figure,source,source_detail,verified,checked_on,notes
 4,Coin flip average before fees,−0.005%,data/stats/ep01_scalping.json,results['5m|random'].avg_gross_pct,yes,2026-11-23,
 5,Pairs profitable after fees (EMA),1 of 93,data/stats/ep01_scalping.json,results['5m|ema_cross'].symbols_profitable_net_007,yes,2026-11-23,
 6,Fee share of the average 5m move,13%,data/stats/ep01_scalping.json,results['5m|ema_cross'].fee_share_of_avg_move_net_007_pct (13.2),yes,2026-11-23,8% on 15m; 4% on 1h
+7,Binance standard futures fees (maker / taker),0.02% / 0.05%,https://www.binance.com/en/support/faq/detail/360033544231,"""a Regular User's maker fee is 0.02% and a Regular User's taker fee is 0.05%"" (page updated 2026-05-01)",yes,2026-11-23,page says hypothetical rates; live table at /en/fee/futureFee did not render
+8,Average 5m trade move entry to exit,about half a percent (0.53%),data/stats/ep01_scalping.json,results['5m|ema_cross'].avg_abs_move_pct,yes,2026-11-23,
+9,Sum of EMA-rule losses after fees,more than 8700% of position size,data/stats/ep01_scalping.json,results['5m|ema_cross'].sum_net_007_pct (-8740.9),yes,2026-11-23,
+10,Win rates of the four strategies,39.7 / 39.8 / 38.7 / 39.9%,data/stats/ep01_scalping.json,results['5m|*'].win_rate_pct,yes,2026-11-23,
+11,Random price hits a 1.5x target before a 1x stop about 40% of the time,40%,our calculation,"driftless random walk: P(target first) = stop / (stop + target) = 1 / 2.5",yes,2026-11-23,label OUR CALCULATION on screen
+12,Every month May-Oct negative for the EMA rule after fees,6 of 6 months,data/stats/ep01_scalping.json,monthly_net_007['5m|ema_cross|*'],yes,2026-11-23,-0.058 to -0.086 per trade
+13,Fee share of the average move on 15m and 1h,about 8% / about 4%,data/stats/ep01_scalping.json,fee_share_of_avg_move_net_007_pct (7.7 / 4.1),yes,2026-11-23,
+14,15m and 1h EMA rule still negative after fees,-0.084% / -0.191%,data/stats/ep01_scalping.json,results['15m|ema_cross'] / ['1h|ema_cross'].avg_net_007_pct,yes,2026-11-23,
+15,RSI on 1h cleared fees by about one hundredth of a percent over 841 trades,+0.0103%,data/stats/ep01_scalping.json,results['1h|rsi_revert'],yes,2026-11-23,CI before fees -0.126 to +0.294
+16,MACD before fees,0.000%,data/stats/ep01_scalping.json,results['5m|macd_trend'].avg_gross_pct (-0.0001),yes,2026-11-23,
+17,RSI before fees,-0.006%,data/stats/ep01_scalping.json,results['5m|rsi_revert'].avg_gross_pct,yes,2026-11-23,

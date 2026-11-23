@@ -49,4 +49,4 @@ actually changes the maths (fewer, larger moves; limit entries that pay the lowe
 ## Lumin
 None in this episode beyond the channel name (owner, 23 NOV 2026: high-demand crypto first, not the app).
 
-## Target length: about 9 minutes
+## Target length: about 7 minutes (1,030 words of narration)
