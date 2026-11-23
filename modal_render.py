@@ -142,7 +142,7 @@ def stitch_master(job: str, n_chunks: int, audio_path: str | None) -> dict:
     final = base / "final.mp4"
     if audio_path:
         _run(["ffmpeg", "-y", "-hide_banner", "-loglevel", "error", "-i", str(video), "-i", audio_path,
-              "-map", "0:v", "-map", "1:a", "-c:v", "copy", "-c:a", "aac", "-b:a", "320k", "-shortest",
+              "-filter_complex", "[1:a]apad[a]", "-map", "0:v", "-map", "[a]", "-c:v", "copy", "-c:a", "aac", "-b:a", "320k", "-shortest",
               "-movflags", "+faststart", str(final)])
     else:
         video.rename(final)

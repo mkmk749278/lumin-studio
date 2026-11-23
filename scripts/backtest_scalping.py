@@ -201,6 +201,15 @@ def main() -> int:
             "caveat": "no slippage beyond next-open entry, today's universe applied backwards: both flatter results",
         },
         "results": {f"{tf}|{rule}": summarise(v) for (tf, rule), v in sorted(acc.items())},
+        # For the film: per-pair average after 0.07% (the 93-pair grid) and the stacked, uncompounded curve of the
+        # 5m EMA rule after fees (the equity chart), downsampled to ~300 points.
+        "per_symbol_net_007": {f"{tf}|{rule}": {s: round(float(np.mean([x[2] for x in v if x[0] == s])) - FEES["net_007"], 4)
+                                                for s in sorted({x[0] for x in v})}
+                               for (tf, rule), v in sorted(acc.items()) if tf == "5m"},
+        "equity_5m_ema_net_007": (lambda rows: (lambda cum: [[int(rows[i][1]), round(float(cum[i]), 2)]
+                                                              for i in range(0, len(rows), max(1, len(rows) // 300))]
+                                                + [[int(rows[-1][1]), round(float(cum[-1]), 2)]])(
+            np.cumsum([r[2] - FEES["net_007"] for r in rows])))(sorted(acc[("5m", "ema_cross")], key=lambda r: r[1])),
         "monthly_net_007": {f"{tf}|{rule}|{m}": round(st.fmean(x[2] for x in v) - FEES["net_007"], 4)
                             for (tf, rule, m), v in sorted(monthly.items())},
     }

@@ -5,6 +5,7 @@ import {DEMO_FRAMES, LuminDemo} from './compositions/LuminDemo';
 import {shortDuration, TradeAutopsyShort} from './compositions/TradeAutopsyShort';
 import {BrandBanner} from './brand/BrandBanner';
 import {BrandLogo} from './brand/BrandLogo';
+import {EP01_DURATION, Ep01} from './episodes/ep01/Ep01';
 import {loadStudioFonts} from './lib/fonts';
 import {FPS} from './theme/tokens';
 
@@ -18,6 +19,8 @@ export const Root: React.FC = () => (
 		<Composition id="TradeAutopsyShort" component={TradeAutopsyShort} width={1080} height={1920} fps={FPS} durationInFrames={shortDuration()} />
 		{/* 5 s engine check at 1080p — the Modal smoke-test target */}
 		<Composition id="LuminDemo" component={LuminDemo} width={1920} height={1080} fps={FPS} durationInFrames={DEMO_FRAMES} />
+		{/* Episodes: 4K master; review cuts at --scale=1/3 (720p). Audio is muxed at the stitch, never rendered here. */}
+		<Composition id="Ep01" component={Ep01} width={3840} height={2160} fps={FPS} durationInFrames={EP01_DURATION} defaultProps={{withAudio: false}} />
 		{/* Channel art (stills): YouTube profile picture and banner */}
 		<Composition id="BrandLogo" component={BrandLogo} width={800} height={800} fps={FPS} durationInFrames={1} />
 		<Composition id="BrandBanner" component={BrandBanner} width={2560} height={1440} fps={FPS} durationInFrames={1} />

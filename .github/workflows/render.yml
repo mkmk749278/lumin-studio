@@ -119,7 +119,7 @@ jobs:
           ffmpeg -y -hide_banner -loglevel error -f concat -safe 0 -i concat.txt -c copy -movflags +faststart video.mp4
           if [ -n "${{ inputs.audio }}" ]; then
             scripts/gdrive.sh pull "episodes/${{ inputs.episode }}/audio" audio > /dev/null
-            ffmpeg -y -hide_banner -loglevel error -i video.mp4 -i "audio/${{ inputs.audio }}" -map 0:v -map 1:a \
+            ffmpeg -y -hide_banner -loglevel error -i video.mp4 -i "audio/${{ inputs.audio }}" -filter_complex "[1:a]apad[a]" -map 0:v -map "[a]" \
               -c:v copy -c:a aac -b:a 320k -shortest -movflags +faststart "${{ inputs.name }}"
           else
             mv video.mp4 "${{ inputs.name }}"
