@@ -1,2 +1,9 @@
 id,claim,exact_figure,source,source_detail,verified,checked_on,notes
-1,"<claim as said on screen or in narration>","<figure exactly as shown>","<file path or URL>","<file sha256 / page / field>",no,,
+1,Delivered closed signals in the window,"5,130",data/stats/ep01_fill_gap.json,"all.n; sha256 09ea5584ab8266abdfb64797be486fa32c721719d92e48dddaae7084b525f5a8",yes,2026-11-23,entry 25 JUN – 23 NOV 2026
+2,Paper result per trade after fees,+0.085%,data/stats/ep01_fill_gap.json,all.stamped_net_pct,yes,2026-11-23,CI +0.009 to +0.168
+3,Paper result without the best 1%,−0.01%,data/stats/ep01_fill_gap.json,all.stamped_net_without_top_1pct (-0.0066),yes,2026-11-23,
+4,Trades with a recorded first tradable price,"3,408",data/stats/ep01_fill_gap.json,all.observed.n,yes,2026-11-23,from 05 SEP 2026
+5,Paper result on that set,+0.103%,data/stats/ep01_fill_gap.json,all.observed.stamped_net_pct,yes,2026-11-23,
+6,Result at the real fill,−0.100%,data/stats/ep01_fill_gap.json,all.observed.rebased_net_pct,yes,2026-11-23,CI -0.20 to +0.005
+7,At the fill with break-even at the fill,−0.040%,data/stats/ep01_fill_gap.json,all.observed.be_at_fill_net_pct,yes,2026-11-23,
+8,Share of entries already moved against the trade,58%,data/stats/ep01_fill_gap.json,all.observed.drift_against_trade_share_pct,yes,2026-11-23,
