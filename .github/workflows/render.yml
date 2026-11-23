@@ -80,13 +80,15 @@ jobs:
           node-version: "22.11.0"
       - run: npm ci --no-audit --no-fund && npx remotion browser ensure
       - name: Render frames ${{ matrix.range }} (video only)
+        shell: bash  # -eo pipefail: a failed render fails the step; `|| true` stops an empty log filter from failing it
         run: |
           mkdir -p out
           start=${{ matrix.range }}; start=${start%%-*}
           npx remotion render src/index.ts "${{ inputs.composition }}" "out/chunk_$(printf %06d $start).mp4" \
             --frames=${{ matrix.range }} --scale=${{ inputs.scale }} --muted --codec=h264 --crf=16 \
             --pixel-format=yuv420p --concurrency=4 --gl=swangle --log=error \
-            2>&1 | grep --line-buffered -vE "differing memory|CGroup|MemAvailable|--memory flag|lower amount of memory"
+            2>&1 | { grep --line-buffered -vE "differing memory|CGroup|MemAvailable|--memory flag|lower amount of memory" || true; }
+          ls -la out
       - uses: actions/upload-artifact@v4.6.2
         with:
           name: chunk_${{ matrix.range }}
