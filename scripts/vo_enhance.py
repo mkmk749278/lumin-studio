@@ -80,6 +80,37 @@ def write(path: Path, w: np.ndarray) -> None:
                     "-c:a", "pcm_s24le", str(path)], input=pcm, check=True)
 
 
+def split_points(w: np.ndarray, target_s: float = 40.0, min_gap_s: float = 0.25) -> list[int]:
+    """Sample indices to cut a long take at: the middle of a pause (<= -40 dBFS for >= 0.25 s) nearest each ~40 s.
+
+    Cutting only inside silence means the enhanced pieces join with no seam in any word. A take with no pause near a
+    target simply gets no cut there (fewer, longer pieces), never a cut through speech."""
+    win = int(0.02 * SR)
+    n = len(w) // win
+    quiet = np.abs(w[: n * win]).reshape(n, win).max(axis=1) < 10 ** (-40 / 20)
+    gaps, i = [], 0
+    while i < n:
+        if quiet[i]:
+            j = i
+            while j < n and quiet[j]:
+                j += 1
+            if (j - i) * 0.02 >= min_gap_s:
+                gaps.append(((i + j) // 2) * win)
+            i = j
+        else:
+            i += 1
+    cuts, last = [], 0
+    for t in np.arange(target_s, len(w) / SR - target_s / 2, target_s):
+        near = [g for g in gaps if g > last + int(10 * SR)]
+        if not near:
+            break
+        g = min(near, key=lambda g: abs(g - t * SR))
+        if abs(g - t * SR) < 15 * SR:
+            cuts.append(g)
+            last = g
+    return cuts
+
+
 def enhance_array(w: np.ndarray, device: str | None = None) -> np.ndarray:
     """Resemble Enhance on one mono 44.1 kHz array. Runs wherever resemble_enhance is installed (venv or GPU image)."""
     import torch
@@ -108,11 +139,19 @@ def main() -> int:
     if a.backend == "modal":
         sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
         from modal_gpu import app, enhance_block
-        log(f"{len(datas)} block(s) -> Modal GPU, in parallel")
+        # Every block is cut at pauses into ~40 s pieces; all pieces of all blocks run on GPUs at once.
+        pieces, owner = [], []
+        for bi, w in enumerate(raws):
+            edges = [0, *split_points(w), len(w)]
+            for a0, b0 in zip(edges[:-1], edges[1:]):
+                pieces.append(w[a0:b0])
+                owner.append(bi)
+        log(f"{len(datas)} block(s) -> {len(pieces)} piece(s) cut at pauses -> Modal GPUs, in parallel")
         with app.run():
-            results = list(enhance_block.map(datas))
-        enh = [np.frombuffer(r["pcm"], dtype=np.float32).copy() for r in results]
-        secs = [r["seconds"] for r in results]
+            results = list(enhance_block.map([p.astype(np.float32).tobytes() for p in pieces]))
+        outs = [np.frombuffer(r["pcm"], dtype=np.float32).copy() for r in results]
+        enh = [np.concatenate([o for o, k in zip(outs, owner) if k == bi]) for bi in range(len(raws))]
+        secs = [round(max(r["seconds"] for r, k in zip(results, owner) if k == bi), 1) for bi in range(len(raws))]
         device = results[0]["device"]
     else:
         enh, secs = [], []

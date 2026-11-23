@@ -1,7 +1,7 @@
 """Lumin Studio — GPU jobs on Modal (owner, 23 NOV 2026: "use GPU, Kaggle or Modal").
 
-enhance_block: Resemble Enhance on one recording block, on a T4. scripts/vo_enhance.py --backend modal sends every
-block at once (.map), so a whole narration takes about as long as its longest block.
+enhance_block: Resemble Enhance on one piece of a recording block (cut at a pause, ~40 s), on a T4.
+scripts/vo_enhance.py --backend modal sends every piece at once (.map), so a narration takes about as long as one piece.
 
 Cost guardrails (CLAUDE.md §2B): plain @app.function, scaledown_window=2, no region, no non_preemptible. T4 is the
 cheapest GPU Modal offers; Resemble Enhance needs ~3 GB of VRAM, so nothing bigger is justified. The model (~1.6 GB)
@@ -51,11 +51,13 @@ def enhance_block(data: bytes) -> dict:
 
     sys.path.insert(0, "/root")
     import torch
-    from vo_enhance import decode_bytes, enhance_array
+    import numpy as np
+    from vo_enhance import enhance_array
 
     t0 = time.time()
     device = "cuda" if torch.cuda.is_available() else "cpu"
-    out = enhance_array(decode_bytes(data), device)
+    # `data` is raw float32 PCM at 44.1 kHz mono: a piece the caller already cut at a pause.
+    out = enhance_array(np.frombuffer(data, dtype=np.float32).copy(), device)
     secs = round(time.time() - t0, 1)
     print(f"[gpu] block of {len(out) / 44100:.1f}s enhanced in {secs}s on {torch.cuda.get_device_name(0) if device == 'cuda' else 'cpu'}")
     return {"pcm": out.tobytes(), "seconds": secs, "device": torch.cuda.get_device_name(0) if device == "cuda" else "cpu"}
