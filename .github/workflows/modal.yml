@@ -1,0 +1,83 @@
+# GPU and heavy jobs on Modal, started by hand (owner, 23 NOV 2026). The runner only orchestrates (a few minutes);
+# the compute is on Modal, billed against its monthly credit (hard $29 limit, CLAUDE.md §2B).
+#   enhance  Drive episodes/<id>/blocks/*_bNN.* -> Resemble Enhance on T4 GPUs (all blocks in parallel) ->
+#            Drive episodes/<id>/audio/{vo.wav, vo_raw.wav, enhance.json}
+#   render   modal_render.py: bundle once, N CPU containers, one WAV mux -> Drive episodes/<id>/renders/<name>
+# Needs repo secrets MODAL_TOKEN_ID, MODAL_TOKEN_SECRET, GDRIVE_RCLONE_TOKEN (one Termux command: CLAUDE.md §2A).
+name: modal
+on:
+  workflow_dispatch:
+    inputs:
+      task:
+        description: "enhance | render"
+        required: true
+        default: enhance
+      episode:
+        description: "episode id (Drive Lumin-Studio/episodes/<episode>/)"
+        required: true
+      composition:
+        description: "render: composition id"
+        default: FuturesLabLong
+      scale:
+        description: "render: FuturesLabLong 1 = 4K master, 0.5 = 1080p"
+        default: "1"
+      workers:
+        description: "render: parallel CPU containers (25-35 for a full episode)"
+        default: "30"
+      audio:
+        description: "render: mastered WAV name in Drive episodes/<episode>/audio/ ('' = silent)"
+        default: ""
+      name:
+        description: "render: output file name"
+        default: master_4k.mp4
+
+permissions:
+  contents: read
+
+concurrency:
+  group: modal-${{ inputs.episode }}
+  cancel-in-progress: false
+
+jobs:
+  run:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 180
+    env:
+      MODAL_TOKEN_ID: ${{ secrets.MODAL_TOKEN_ID }}
+      MODAL_TOKEN_SECRET: ${{ secrets.MODAL_TOKEN_SECRET }}
+      GDRIVE_RCLONE_TOKEN: ${{ secrets.GDRIVE_RCLONE_TOKEN }}
+      EP: ${{ inputs.episode }}
+    steps:
+      - name: Secrets present
+        run: |
+          for v in MODAL_TOKEN_ID MODAL_TOKEN_SECRET GDRIVE_RCLONE_TOKEN; do
+            [ -n "${!v}" ] || { echo "::error::repo secret $v is missing (Termux command: CLAUDE.md §2A)"; exit 1; }
+          done
+      - uses: actions/checkout@v4.2.2
+      - uses: actions/setup-python@v5.3.0
+        with:
+          python-version: "3.12"
+      - run: pip install -q -r requirements.txt numpy==2.1.3 && sudo apt-get update -qq && sudo apt-get install -y -qq ffmpeg > /dev/null
+
+      - name: Enhance (Resemble Enhance on Modal T4)
+        if: inputs.task == 'enhance'
+        run: |
+          scripts/gdrive.sh pull "episodes/$EP/blocks" blocks > /dev/null
+          mapfile -t files < <(ls blocks | grep -E '_b[0-9]{2}\.(mp3|wav|m4a|flac)$' | sort | sed 's|^|blocks/|')
+          [ ${#files[@]} -gt 0 ] || { echo "::error::no <id>_bNN.mp3 files in Drive episodes/$EP/blocks"; exit 1; }
+          printf '%s\n' "${files[@]}"
+          python3 scripts/vo_enhance.py "episodes/$EP" "${files[@]}" --backend modal
+          scripts/gdrive.sh up --sub "episodes/$EP/audio" "episodes/$EP/audio/vo.wav" "episodes/$EP/audio/vo_raw.wav" "episodes/$EP/vo/enhance.json"
+
+      - name: Render (Modal CPU fan-out)
+        if: inputs.task == 'render'
+        run: |
+          args=(--composition "${{ inputs.composition }}" --scale "${{ inputs.scale }}" --workers "${{ inputs.workers }}")
+          if [ -n "${{ inputs.audio }}" ]; then
+            scripts/gdrive.sh pull "episodes/$EP/audio" audio > /dev/null
+            args+=(--audio "audio/${{ inputs.audio }}")
+          fi
+          job="$EP-$(date -u +%Y%m%d-%H%M%S)"
+          modal run modal_render.py "${args[@]}" --job "$job"
+          modal volume get lumin-render-vol "/renders/$job/final.mp4" "${{ inputs.name }}"
+          scripts/gdrive.sh up --sub "episodes/$EP/renders" "${{ inputs.name }}"

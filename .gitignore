@@ -31,3 +31,4 @@ data/raw/
 episodes/*/assets/
 episodes/*/audio/
 .DS_Store
+.cache/

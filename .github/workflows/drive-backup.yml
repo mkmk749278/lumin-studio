@@ -1,0 +1,43 @@
+# Back up the whole repo to Google Drive after every merge to main (owner, 23 NOV 2026: "backup repo data to drive
+# after every merge"). Light job, about a minute: bundles every branch, tag and commit and uploads two files to
+# Drive Lumin-Studio/_Backups/lumin-studio/: a dated bundle and latest.bundle. Restore anywhere: git clone latest.bundle
+# Needs the repo secret GDRIVE_RCLONE_TOKEN (Termux one-liner: CLAUDE.md §2A).
+name: drive-backup
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: drive-backup
+  cancel-in-progress: false
+
+jobs:
+  backup:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 20
+    env:
+      GDRIVE_RCLONE_TOKEN: ${{ secrets.GDRIVE_RCLONE_TOKEN }}
+    steps:
+      - name: Secret present
+        run: '[ -n "$GDRIVE_RCLONE_TOKEN" ] || { echo "::error::repo secret GDRIVE_RCLONE_TOKEN is missing"; exit 1; }'
+      - uses: actions/checkout@v4.2.2
+        with:
+          fetch-depth: 0
+      - name: Bundle every branch and commit
+        run: |
+          git fetch --quiet origin '+refs/heads/*:refs/remotes/origin/*'
+          for b in $(git for-each-ref --format='%(refname:strip=3)' refs/remotes/origin | grep -v '^HEAD$'); do
+            git branch --quiet --force "$b" "origin/$b" 2>/dev/null || true
+          done
+          stamp=$(date -u +%Y-%m-%d_%H%M)
+          mkdir -p out
+          git bundle create "out/lumin-studio_${stamp}_$(git rev-parse --short HEAD).bundle" --branches --tags
+          git bundle verify out/*.bundle
+          cp out/*.bundle out/latest.bundle
+          ls -la out
+      - name: Upload to Drive
+        run: scripts/gdrive.sh up --sub _Backups/lumin-studio out/*.bundle

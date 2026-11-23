@@ -1,0 +1,20 @@
+# Resemble Enhance for scripts/vo_enhance.py. It pins torch 2.1.1, so it gets its OWN Python 3.11 venv:
+#   uv venv -p 3.11 .venv-enhance && . .venv-enhance/bin/activate
+#   uv pip install torch==2.1.1 torchaudio==2.1.1 torchvision==0.16.1 --index-url https://download.pytorch.org/whl/cpu
+#   uv pip install -r requirements-enhance.txt "setuptools<70"
+#   DS_BUILD_OPS=0 uv pip install --no-build-isolation deepspeed==0.12.4   # imported by the package, unused at inference
+#   uv pip install --no-deps resemble-enhance==0.0.1
+# (setuptools<70: deepspeed 0.12.4's build needs pkg_resources, removed from newer setuptools.) git-lfs must be installed.
+numpy==1.26.2
+librosa==0.10.1
+omegaconf==2.3.0
+soundfile==0.12.1
+resampy==0.4.2
+scipy==1.11.4
+matplotlib==3.8.1
+pandas==2.1.3
+celluloid==0.2.0
+ptflops==0.7.1.2
+tabulate==0.8.10
+rich==13.7.0
+tqdm==4.66.1

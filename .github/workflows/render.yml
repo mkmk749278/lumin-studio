@@ -1,0 +1,130 @@
+# Render a composition on GitHub's runners (owner, 23 NOV 2026: "as of now we do render with GitHub runners";
+# Modal takes over once its tokens are set — modal_render.py is the same pipeline). Started by hand only.
+# plan: bundle once, read the frame count, split it into N non-overlapping frame ranges
+# render: N runners (max 6), each renders its range VIDEO-ONLY (muted) to an H.264 chunk
+# join: lossless concat of the chunks, then the ONE mastered WAV muxed once (no per-chunk AAC = no seam clicks),
+#       checks the frame count, and uploads to Drive Lumin-Studio/episodes/<episode>/renders/.
+# Needs the repo secret GDRIVE_RCLONE_TOKEN. The master WAV is read from Drive Lumin-Studio/episodes/<episode>/audio/.
+name: render
+on:
+  workflow_dispatch:
+    inputs:
+      composition:
+        description: "composition id (LuminDemo, FuturesLabLong, TradeAutopsyShort)"
+        required: true
+        default: LuminDemo
+      episode:
+        description: "episode id (Drive folder Lumin-Studio/episodes/<episode>/); 'demo' for engine checks"
+        required: true
+        default: demo
+      scale:
+        description: "FuturesLabLong: 0.3333 = 720p review, 0.5 = 1080p, 1 = 4K master. Others: 1"
+        default: "1"
+      runners:
+        description: "parallel runners (1-6)"
+        default: "2"
+      audio:
+        description: "mastered WAV name in Drive episodes/<episode>/audio/ ('' = silent render)"
+        default: ""
+      name:
+        description: "output file name"
+        required: true
+        default: lumin_demo.mp4
+
+permissions:
+  contents: read
+
+concurrency:
+  group: render-${{ inputs.episode }}
+  cancel-in-progress: false
+
+jobs:
+  plan:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 20
+    outputs:
+      ranges: ${{ steps.p.outputs.ranges }}
+      frames: ${{ steps.p.outputs.frames }}
+    steps:
+      - uses: actions/checkout@v4.2.2
+      - uses: actions/setup-node@v4.1.0
+        with:
+          node-version: "22.11.0"
+      - run: npm ci --no-audit --no-fund && npx remotion browser ensure
+      - id: p
+        run: |
+          npx remotion bundle src/index.ts --out-dir build --log=error > /dev/null
+          meta=$(node scripts/composition_meta.mjs build "${{ inputs.composition }}" | tail -1)
+          echo "$meta"
+          python3 - "$meta" "${{ inputs.runners }}" <<'PY' >> "$GITHUB_OUTPUT"
+          import json, math, sys
+          m = json.loads(sys.argv[1]); n = max(1, min(6, int(sys.argv[2]), m["frames"]))
+          size = math.ceil(m["frames"] / n)
+          print("ranges=" + json.dumps([f"{s}-{min(m['frames'], s + size) - 1}" for s in range(0, m["frames"], size)]))
+          print(f"frames={m['frames']}")
+          PY
+
+  render:
+    needs: plan
+    runs-on: ubuntu-24.04
+    timeout-minutes: 300
+    strategy:
+      fail-fast: true
+      max-parallel: 6
+      matrix:
+        range: ${{ fromJson(needs.plan.outputs.ranges) }}
+    steps:
+      - uses: actions/checkout@v4.2.2
+      - uses: actions/setup-node@v4.1.0
+        with:
+          node-version: "22.11.0"
+      - run: npm ci --no-audit --no-fund && npx remotion browser ensure
+      - name: Render frames ${{ matrix.range }} (video only)
+        run: |
+          mkdir -p out
+          start=${{ matrix.range }}; start=${start%%-*}
+          npx remotion render src/index.ts "${{ inputs.composition }}" "out/chunk_$(printf %06d $start).mp4" \
+            --frames=${{ matrix.range }} --scale=${{ inputs.scale }} --muted --codec=h264 --crf=16 \
+            --pixel-format=yuv420p --concurrency=4 --gl=swangle --log=error \
+            2>&1 | grep --line-buffered -vE "differing memory|CGroup|MemAvailable|--memory flag|lower amount of memory"
+      - uses: actions/upload-artifact@v4.6.2
+        with:
+          name: chunk_${{ matrix.range }}
+          path: out/chunk_*.mp4
+          compression-level: 0
+          retention-days: 3
+          if-no-files-found: error
+
+  join:
+    needs: [plan, render]
+    runs-on: ubuntu-24.04
+    timeout-minutes: 60
+    env:
+      GDRIVE_RCLONE_TOKEN: ${{ secrets.GDRIVE_RCLONE_TOKEN }}
+    steps:
+      - name: Secret present
+        run: '[ -n "$GDRIVE_RCLONE_TOKEN" ] || { echo "::error::repo secret GDRIVE_RCLONE_TOKEN is missing"; exit 1; }'
+      - uses: actions/checkout@v4.2.2
+      - run: sudo apt-get update -qq && sudo apt-get install -y -qq ffmpeg > /dev/null && ffmpeg -version | head -1
+      - uses: actions/download-artifact@v4.1.8
+        with:
+          pattern: chunk_*
+          path: out
+          merge-multiple: true
+      - name: Join and lay the master audio
+        run: |
+          ls out/chunk_*.mp4 | sort | sed "s|^|file '$PWD/|; s|$|'|" > concat.txt && cat concat.txt
+          ffmpeg -y -hide_banner -loglevel error -f concat -safe 0 -i concat.txt -c copy -movflags +faststart video.mp4
+          if [ -n "${{ inputs.audio }}" ]; then
+            scripts/gdrive.sh pull "episodes/${{ inputs.episode }}/audio" audio > /dev/null
+            ffmpeg -y -hide_banner -loglevel error -i video.mp4 -i "audio/${{ inputs.audio }}" -map 0:v -map 1:a \
+              -c:v copy -c:a aac -b:a 320k -shortest -movflags +faststart "${{ inputs.name }}"
+          else
+            mv video.mp4 "${{ inputs.name }}"
+          fi
+          got=$(ffprobe -v error -count_packets -select_streams v:0 -show_entries stream=nb_read_packets -of csv=p=0 "${{ inputs.name }}")
+          echo "frames: $got of ${{ needs.plan.outputs.frames }}"
+          [ "$got" = "${{ needs.plan.outputs.frames }}" ] || { echo "::error::frame count mismatch"; exit 1; }
+          ffprobe -v error -show_entries format=duration,size:stream=codec_name,width,height -of compact "${{ inputs.name }}"
+      - name: To Drive
+        run: scripts/gdrive.sh up --sub "episodes/${{ inputs.episode }}/renders" "${{ inputs.name }}"

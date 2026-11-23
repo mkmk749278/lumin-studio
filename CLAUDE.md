@@ -6,8 +6,8 @@ write the reason beside it.
 
 ## Every session
 1. Read this file, then the open episode's `episodes/<id>/brief.md` and its `handoff.md` if one exists.
-2. Work on the session's branch; commit and push at least every 30–45 minutes and at each stage's end; land on
-   `main` through a PR. Never push to `main` directly.
+2. **Work on `main`** (owner, 23 NOV 2026: "create main, work on that"). Commit and push at least every 30–45
+   minutes and at each stage's end; every push to `main` is backed up to Drive by `drive-backup.yml`.
 3. Times told to the owner in chat are **IST** ("11:00 AM IST"; IST = UTC + 5:30). Files and on-screen dates
    stay UTC, day-first (`05 JAN 2026`).
 4. The owner works **only from an Android phone**: every script is headless CLI with clear stdout progress,
@@ -38,10 +38,40 @@ write the reason beside it.
   dataset actually shows, decided after `analyze_dataset.py` runs — never before.
 
 ## 2. Infrastructure (non-negotiable)
-### A. Zero GitHub Actions
-- **Never** create `.github/workflows/` or any Actions YAML here. GitHub is a source vault only. All rendering,
-  audio processing and heavy compute run on **Modal**. *Why:* heavy media jobs on GitHub runners can get an
-  account's repositories disabled.
+### A. GitHub Actions: renders now, light and by hand (owner, 23 NOV 2026)
+- **Owner's decision, 23 NOV 2026: "as of now we do render with GitHub runners."** This replaces the bootstrap's
+  "zero GitHub Actions" rule until Modal is set up; then 4K masters move to Modal (`modal_render.py`, same pipeline).
+- *The risk, stated once so nobody forgets it:* GitHub's terms allow Actions for building and testing a repo's own
+  software, and heavy video renders on runners have already got one of the owner's repos disabled. So every render
+  here is: started by hand (`workflow_dispatch`, never on push), at most **6 runners**, review cuts at 720p/1080p, the
+  4K master once per episode after the owner approves the cut, and **everything backed up to Drive** so a disabled
+  repo loses nothing.
+- Workflows (`.github/workflows/`):
+  - `render.yml` — plan (bundle, frame count) → up to 6 runners render non-overlapping frame ranges **muted** →
+    join: lossless concat, ONE master WAV muxed (AAC 320k), frame count checked, uploaded to Drive
+    `Lumin-Studio/episodes/<id>/renders/`.
+  - `drive-backup.yml` — **after every merge to `main`**, a `git bundle` of every branch and commit goes to Drive
+    `Lumin-Studio/_Backups/lumin-studio/` (dated + `latest.bundle`; restore: `git clone latest.bundle`).
+- The repo is **public**: logs and artifacts are readable by anyone. Never echo a secret; never commit raw
+  datasets (`data/raw/` is ignored); renders go to Drive, artifacts last 3 days.
+- **Secrets: one Termux command** (owner, 23 NOV 2026), run on the phone; it sets `GDRIVE_RCLONE_TOKEN`,
+  `MODAL_TOKEN_ID` and `MODAL_TOKEN_SECRET` as repo secrets, prints nothing secret, and can be re-run to replace one:
+  ```bash
+  bash <(curl -fsSL https://raw.githubusercontent.com/mkmk749278/lumin-studio/main/scripts/termux_secrets.sh)
+  ```
+  The Modal pair comes from modal.com → Settings → API Tokens → New Token.
+- `modal.yml` (by hand): the runner only orchestrates; the compute is on Modal. `task: enhance` runs Resemble
+  Enhance on T4 GPUs (`modal_gpu.py`), every block in parallel; `task: render` runs `modal_render.py` (the 4K master
+  path). The session starts these with the GitHub tools and reads the results from Drive.
+- GPU choice: Modal T4 (cheapest GPU, ~3 GB VRAM needed). Kaggle's free GPUs are the fallback if the Modal credit
+  runs low; the session's Kaggle API access is already connected.
+
+### Drive (owner, 23 NOV 2026)
+- The channel's own top-level folder **`Lumin-Studio`** (id `1d6YOipH7yiKxiBOZTNzNhBF2X229XZsC`); never write in any
+  other Drive folder. `scripts/gdrive.sh up|pull|sync|ls`. Layout: `episodes/<id>/{blocks,audio,renders,repo}/`,
+  `_Backups/lumin-studio/`.
+- At each stage's end the session mirrors the episode's text folder to `episodes/<id>/repo/`
+  (`scripts/gdrive.sh sync episodes/<id> episodes/<id>/repo`). Takes, enhanced audio and renders live only on Drive.
 
 ### B. Modal (`modal>=1.6`, pinned 1.6.4)
 - Workspace: Modal Starter, $30/month free credit with a **hard $29 monthly usage limit**. State the estimated
@@ -63,7 +93,7 @@ write the reason beside it.
 ### C. Repo hygiene
 - Never commit heavy binaries or secrets. `.gitignore` covers `node_modules/`, `out/`, `build/`, media
   (`*.mp4 *.mov *.wav *.mp3 *.zip` …), `.env*`, `data/raw/`, `episodes/*/assets|audio/`. Large media lives on
-  the Modal Volume or Google Drive / Cloudflare R2. Vendored OFL fonts (`public/fonts/`, ~170 KB) are the
+  the Modal Volume or Google Drive / Cloudflare R2. Vendored OFL fonts (`public/fonts/`, ~190 KB) are the
   only binaries in git.
 - Optional GitLab mirror: `git remote set-url --add --push origin https://gitlab.com/<user>/lumin-studio.git`
   (after re-adding the GitHub push URL the same way).
@@ -76,7 +106,14 @@ scripts/fetch_market_data.py    geo-block-safe Binance USD-M klines / funding ->
 scripts/analyze_dataset.py      closed-signal CSV/JSON -> data/stats/<name>/*.json (with input sha256)
 scripts/align_audio.py          narration -> words.json (ElevenLabs timestamps or local MMS forced alignment)
 scripts/audio_master.py         VO (+bed) -> one 48 kHz/24-bit WAV at -14 LUFS / -1.5 dBTP, verified
-scripts/composition_meta.mjs    composition metadata as JSON (used by modal_render.py)
+scripts/composition_meta.mjs    composition metadata as JSON (render.yml, modal_render.py)
+scripts/vo_blocks.py            approved script -> <=10,000-character recording blocks + lint
+scripts/vo_enhance.py           owner's takes -> Resemble Enhance -> joined vo.wav (+ vo_raw.wav)
+scripts/gdrive.sh               Drive up / pull / sync / ls (folder Lumin-Studio)
+config/voice.json               the channel voice (Reid) and its settings
+modal_gpu.py                    Modal T4: Resemble Enhance per block (vo_enhance.py --backend modal)
+scripts/termux_secrets.sh       the owner's one Termux command for every repo secret
+.github/workflows/              render.yml (runners, <=6) · modal.yml (enhance | render on Modal) · drive-backup.yml
 data/market/  data/stats/       cached, deterministic inputs — the ONLY data a render reads
 src/Root.tsx                    FuturesLabLong 3840x2160@30 · TradeAutopsyShort 1080x1920@30 · LuminDemo 1920x1080@30 (5 s)
 src/theme/tokens.ts             colours, type, springs, safe zones
@@ -133,10 +170,17 @@ episodes/_template/             brief.md · script.md · claims.csv — copy to 
   one, never imply live results from a backtest or a counterfactual.
 - **Units:** PnL % leads; R is shown beside it, never alone (R divides by each trade's own stop, which equalises
   nothing at a fixed notional and can flip a sign). Say whether a figure is gross or net of fees.
-- **Voice:** one fresh ElevenLabs voice used **only** by this channel (chosen by the owner; ID goes in
-  `config/voice.json` when set). TTS text: punctuation-driven pacing (`,` `—` `.`), no bracketed emotion tags,
+- **Voice: Reid** (`1PdyZcb9N22kC6entd5C`, `config/voice.json`), used **only** by this channel. TTS text: punctuation-driven pacing (`,` `—` `.`), no bracketed emotion tags,
   no `...`; numbers and acronyms spelled for speech (`four thousand nine hundred signals`, `five-minute candle`,
   `U-S-D-T`).
+- **Narration flow (owner, 23 NOV 2026):** `scripts/vo_blocks.py episodes/<id>/script.md` packs the approved
+  narration into as few blocks as possible, each **at most 10,000 characters** and ending on a paragraph break,
+  and lints it. The session posts every block in the chat as a click-to-copy code block (plus `vo/vo_blocks.md`
+  via SendUserFile). The owner generates each block in the ElevenLabs app with the same settings and sends the
+  files back (`<id>_b01.mp3`, …). The session uploads the takes to Drive `episodes/<id>/blocks/`, then runs
+  **Resemble Enhance** on each on a Modal GPU (GitHub workflow `modal`, task `enhance`; CPU fallback:
+  `scripts/vo_enhance.py --backend local` in its own venv, `requirements-enhance.txt`, ~6x real time), joins them,
+  keeps `vo_raw.wav` for an A/B listen, and goes on to `align_audio.py` and `audio_master.py`.
 - **Mastering:** VO to **-14 LUFS, -1.5 dBTP**; ambient bed at -25 LUFS, sidechain-ducked under voice
   (`audio_master.py` re-measures and fails if the master misses target).
 - **Disclosure:** never mention "AI voice" or ElevenLabs in public text; use YouTube Studio's altered-content
@@ -160,7 +204,11 @@ python3 scripts/fetch_market_data.py klines --symbol BTCUSDT --interval 15m --st
 python3 scripts/analyze_dataset.py data/raw/<file>.csv --out data/stats/<name> [--outcome pct|r]
 python3 scripts/align_audio.py --audio vo.wav --text vo.txt --out episodes/<id>/words.json
 python3 scripts/audio_master.py --vo vo.wav [--bed bed.wav] --out master.wav
-pip install -r requirements.txt && modal run modal_render.py --composition LuminDemo --workers 2   # smoke test
+python3 scripts/vo_blocks.py episodes/<id>/script.md
+scripts/gdrive.sh up --sub episodes/<id>/blocks <id>_b01.mp3 <id>_b02.mp3 ...   # then run workflow modal, task enhance
+scripts/gdrive.sh up --sub episodes/<id>/audio episodes/<id>/audio/master.wav
+# render on GitHub (Actions tab -> render -> Run workflow), or later on Modal:
+pip install -r requirements.txt && modal run modal_render.py --composition LuminDemo --workers 2
 modal run modal_render.py --composition FuturesLabLong --scale 0.5 --workers 30 --audio master.wav
 ```
 In a cloud session, Remotion's own browser download is blocked: pass `--browser-executable` (above). On

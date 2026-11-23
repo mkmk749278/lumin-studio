@@ -1,0 +1,16 @@
+{
+  "_why": "The channel's one voice, used by no other channel (CLAUDE.md §6). Owner, 23 NOV 2026: voice Reid, ID below; the owner generates each recording block in the ElevenLabs app and sends the files back.",
+  "name": "Reid",
+  "voice_id": "1PdyZcb9N22kC6entd5C",
+  "generated_by": "owner, ElevenLabs app (one take per recording block)",
+  "block_max_chars": 10000,
+  "settings": {
+    "_note": "Fill in the exact model and sliders the owner uses on the first block, then keep them for every block and every episode.",
+    "model": null,
+    "stability": null,
+    "similarity": null,
+    "style": null,
+    "speaker_boost": null
+  },
+  "post": "scripts/vo_enhance.py: Resemble Enhance on each block, joined, then scripts/audio_master.py to -14 LUFS / -1.5 dBTP"
+}
