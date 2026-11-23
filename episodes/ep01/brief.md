@@ -1,4 +1,4 @@
-# ep01 — brief (awaiting the owner's approval of the package)
+# ep01 — brief (package LOCKED 23 NOV 2026; audio approved; review cut r1 sent — see handoff.md)
 
 Topic chosen by the owner on 23 NOV 2026 from the demand check (`research/demand-2026-11-23/`): 5-minute scalping
 strategies are the most-watched futures topic we measured (top long videos ~2.0M, 1.3M, 1.3M views).
