@@ -1,5 +1,8 @@
 # Lumin Studio: Claude Code guide
 
+YouTube channel: **Lumin Futures** (owner, 23 NOV 2026). Said once after the cold open ("This is Lumin Futures.") and
+once at the close; logo and banner: `src/brand/`, rendered with `npx remotion still` (BrandLogo 800x800, BrandBanner 2560x1440).
+
 Programmatic video studio for the **Lumin: Crypto Signals** YouTube channel (the Google Play app for Binance
 USD-M perpetual futures traders). Every rule here is permanent; change one only with the owner's word, and
 write the reason beside it.

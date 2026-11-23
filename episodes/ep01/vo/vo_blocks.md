@@ -1,15 +1,17 @@
 # Recording blocks: ep01
 
-Voice **Reid** (`1PdyZcb9N22kC6entd5C`). 1 block(s), 1180 words, about 7.9 minutes at 150 words a minute.
+Voice **Reid** (`1PdyZcb9N22kC6entd5C`). 1 block(s), 1202 words, about 8.0 minutes at 150 words a minute.
 
 Paste each block as it is (the blank lines are pauses), keep the same settings for every block, and save each take under the file name shown. Send all the files back together.
 
-## Block 1 of 1: save as `ep01_b01.mp3` (6,599 characters)
+## Block 1 of 1: save as `ep01_b01.mp3` (6,720 characters)
 
 ```
 We ran the three most popular five-minute scalping rules on one hundred and seventeen thousand crypto futures trades, and a coin flip did just as well.
 
 After fees, out of ninety-three coins, the best-known rule made money on exactly one.
+
+This is Lumin Futures. We test trading ideas on real futures data, with the fees left in.
 
 This is not an opinion about scalping. It is six months of Binance futures candles, the same exits for every rule, and the fee charged on every single trade. Here is what the data showed, and why it happens.
 
@@ -70,4 +72,6 @@ If there is no edge in the entry, only two things change the result. The cost of
 Neither is a promise. They are the two things this test says matter.
 
 Next, we test pre-planned limit levels on the exact same six months of data. Subscribe to see if the maths finally flips.
+
+This has been Lumin Futures.
 ```

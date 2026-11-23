@@ -2,6 +2,8 @@ We ran the three most popular five-minute scalping rules on 117,000 crypto futur
 
 After fees, out of 93 coins, the best-known rule made money on exactly one.
 
+This is Lumin Futures. We test trading ideas on real futures data, with the fees left in.
+
 This is not an opinion about scalping. It is six months of Binance futures candles, the same exits for every rule, and the fee charged on every single trade. Here is what the data showed, and why it happens.
 
 We took every five-minute candle from the first of May to the end of October, 2026, for 93 perpetual futures pairs on Binance. Bitcoin, Ethereum, Solana, and 90 other coins, straight from Binance's own public archive.
@@ -61,3 +63,5 @@ If there is no edge in the entry, only two things change the result. The cost of
 Neither is a promise. They are the two things this test says matter.
 
 Next, we test pre-planned limit levels on the exact same six months of data. Subscribe to see if the maths finally flips.
+
+This has been Lumin Futures.

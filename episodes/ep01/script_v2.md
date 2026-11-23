@@ -1,6 +1,6 @@
 # ep01 — narration script v2: 5-Minute Scalping Was No Better Than a Coin Flip
 
-> v2, 23 NOV 2026: the owner's five fixes on v1 (fee wording, trader decimals and "Mac-D" for Reid, a real BTCUSDT
+> v2, 23 NOV 2026 (channel name added the same day: Lumin Futures): the owner's five fixes on v1 (fee wording, trader decimals and "Mac-D" for Reid, a real BTCUSDT
 > trade on screen, the cumulative fee line, the Episode 2 bridge). This file is the RECORDING source (spoken forms:
 > Mac-D, decimals in words). Captions use the display forms in vo/captions.txt (MACD, EMA, 0.07%).
 > Every figure is a row in claims.csv. Cue lines are stripped before recording. Runtime about 7:30.
@@ -14,6 +14,9 @@ We ran the three most popular five-minute scalping rules on one hundred and seve
 
 [[CUE: KineticCallout counter 0 → 93 pairs; 92 grey out, 1 stays green — on "one"]]
 After fees, out of ninety-three coins, the best-known rule made money on exactly one.
+
+[[CUE: channel ident: Lumin Futures logo resolves on the grid, under one second — on "Lumin Futures"]]
+This is Lumin Futures. We test trading ideas on real futures data, with the fees left in.
 
 This is not an opinion about scalping. It is six months of Binance futures candles, the same exits for every rule, and the fee charged on every single trade. Here is what the data showed, and why it happens.
 
@@ -117,3 +120,5 @@ If there is no edge in the entry, only two things change the result. The cost of
 Neither is a promise. They are the two things this test says matter.
 
 Next, we test pre-planned limit levels on the exact same six months of data. Subscribe to see if the maths finally flips.
+
+This has been Lumin Futures.
