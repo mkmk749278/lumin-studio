@@ -1,0 +1,407 @@
+1
+00:00:00,080 --> 00:00:08,722
+We ran the three most popular five-minute scalping rules on 117,000 crypto futures trades, and a coin flip did just as well.
+
+2
+00:00:09,243 --> 00:00:14,537
+After fees, out of 93 coins, the best-known rule made money on exactly one.
+
+3
+00:00:15,078 --> 00:00:16,582
+This is Lumin Futures.
+
+4
+00:00:17,043 --> 00:00:21,033
+We test trading ideas on real futures data, with the fees left in.
+
+5
+00:00:21,554 --> 00:00:23,539
+This is not an opinion about scalping.
+
+6
+00:00:23,920 --> 00:00:30,757
+It is six months of Binance futures candles, the same exits for every rule, and the fee charged on every single trade.
+
+7
+00:00:31,138 --> 00:00:33,825
+Here is what the data showed, and why it happens.
+
+8
+00:00:34,347 --> 00:00:42,447
+We took every five-minute candle from the first of May to the end of October, 2026, for 93 perpetual futures pairs on Binance.
+
+9
+00:00:42,888 --> 00:00:48,723
+Bitcoin, Ethereum, Solana, and 90 other coins, straight from Binance's own public archive.
+
+10
+00:00:49,084 --> 00:00:53,254
+Then we coded the three rules you will find in almost every scalping tutorial.
+
+11
+00:00:53,775 --> 00:00:58,307
+One, the moving average cross, the 9 EMA crossing the 21 EMA.
+
+12
+00:00:58,888 --> 00:01:05,906
+Two, the RSI reversal, buying when RSI climbs back above 30 and selling when it drops back below 70.
+
+13
+00:01:06,447 --> 00:01:10,858
+Three, the MACD cross, when the MACD line crosses its signal line.
+
+14
+00:01:11,300 --> 00:01:13,946
+All three get the filter every tutorial adds.
+
+15
+00:01:14,387 --> 00:01:18,157
+Only buy above the 200 EMA, only sell below it.
+
+16
+00:01:18,598 --> 00:01:21,545
+And then a fourth strategy that should not work at all.
+
+17
+00:01:21,966 --> 00:01:22,688
+A coin flip.
+
+18
+00:01:23,149 --> 00:01:28,042
+Random candles, a random direction, traded just as often as the moving average rule.
+
+19
+00:01:28,523 --> 00:01:31,531
+Every trade, from every rule, is managed the same way.
+
+20
+00:01:31,972 --> 00:01:34,338
+The signal has to appear on a closed candle.
+
+21
+00:01:34,719 --> 00:01:38,628
+We enter at the open of the next candle, so nothing peeks into the future.
+
+22
+00:01:38,969 --> 00:01:43,721
+The stop goes one average true range away, the target one and a half ranges away.
+
+23
+00:01:44,202 --> 00:01:47,571
+If price touches both inside one candle, we count the loss.
+
+24
+00:01:48,012 --> 00:01:50,980
+We charge 0.07% round-trip.
+
+25
+00:01:51,340 --> 00:01:56,273
+That is Binance's standard rate when one side gets a maker fill and the other is a market order.
+
+26
+00:01:56,714 --> 00:02:03,952
+Real scalpers using market entries and stop-losses often pay 0.10%, so this test is actually generous.
+
+27
+00:02:04,393 --> 00:02:07,922
+So the only thing that differs between the four strategies is the entry.
+
+28
+00:02:08,423 --> 00:02:09,787
+That is the whole question.
+
+29
+00:02:10,228 --> 00:02:12,253
+Does the entry signal know anything?
+
+30
+00:02:12,654 --> 00:02:15,622
+Before fees, here is the average result per trade.
+
+31
+00:02:15,983 --> 00:02:19,892
+The moving average cross, −0.004%.
+
+32
+00:02:20,374 --> 00:02:21,637
+MACD, zero.
+
+33
+00:02:22,339 --> 00:02:25,627
+RSI, −0.006%.
+
+34
+00:02:26,088 --> 00:02:29,777
+And the coin flip, −0.005%.
+
+35
+00:02:30,198 --> 00:02:31,722
+Those differences are noise.
+
+36
+00:02:32,063 --> 00:02:37,677
+Draw the statistical range around each one and they all overlap, and all of them sit on zero.
+
+37
+00:02:38,158 --> 00:02:46,259
+Over 117,000 trades, the most popular entry signal on a five-minute chart did exactly what a random entry did.
+
+38
+00:02:46,800 --> 00:02:47,702
+Look at the win rates.
+
+39
+00:02:48,103 --> 00:02:50,670
+All four win about 40% of the time.
+
+40
+00:02:51,091 --> 00:02:52,755
+That is not a coincidence.
+
+41
+00:02:53,196 --> 00:03:00,856
+With a target one and a half times farther than the stop, price that moves at random reaches the stop first about 60% of the time.
+
+42
+00:03:01,377 --> 00:03:05,768
+Forty percent wins is exactly what no edge looks like with this setup.
+
+43
+00:03:06,369 --> 00:03:08,956
+Here is what that looks like on one real trade.
+
+44
+00:03:09,357 --> 00:03:13,387
+Bitcoin, the first of July, 2026, on the five-minute chart.
+
+45
+00:03:13,888 --> 00:03:19,242
+At 1:40 a.m., UTC, the 9 EMA crosses above the 21.
+
+46
+00:03:19,723 --> 00:03:20,746
+A textbook long.
+
+47
+00:03:21,227 --> 00:03:22,771
+But look at where it fires.
+
+48
+00:03:23,232 --> 00:03:28,545
+Bitcoin has already climbed about 870 dollars off its low in the last half hour.
+
+49
+00:03:29,006 --> 00:03:32,315
+The signal only arrives after the move it is reacting to.
+
+50
+00:03:32,956 --> 00:03:37,488
+The trade enters at the next open, 58,872.
+
+51
+00:03:38,009 --> 00:03:42,621
+The stop sits one average range below, the target one and a half above.
+
+52
+00:03:43,142 --> 00:03:48,135
+Twenty minutes later, a single wick dips through the stop by less than a third of a range.
+
+53
+00:03:48,616 --> 00:03:50,080
+Ordinary noise for that hour.
+
+54
+00:03:50,521 --> 00:03:53,568
+The trade is out, down 0.32%.
+
+55
+00:03:54,050 --> 00:03:54,611
+Then the fee.
+
+56
+00:03:55,092 --> 00:03:57,177
+Minus 0.39%.
+
+57
+00:03:57,679 --> 00:04:01,408
+And by 3:50, Bitcoin trades straight through the old target.
+
+58
+00:04:01,929 --> 00:04:03,313
+The idea was not wrong.
+
+59
+00:04:03,694 --> 00:04:08,807
+The entry was late, the stop sat inside the noise, and the fee was charged either way.
+
+60
+00:04:09,529 --> 00:04:11,574
+Now charge the fee on every trade.
+
+61
+00:04:12,055 --> 00:04:19,333
+Every strategy loses, about 0.07% per trade, because that is the fee and there was no edge to pay it.
+
+62
+00:04:19,935 --> 00:04:30,080
+Stack every trade the moving average rule took across all 93 pairs together, without compounding, and the fees alone come to more than 82 full position sizes.
+
+63
+00:04:30,501 --> 00:04:32,847
+The total loss is more than 87.
+
+64
+00:04:33,369 --> 00:04:35,073
+It was not one bad month either.
+
+65
+00:04:35,554 --> 00:04:40,286
+Every month from May to October was negative for the moving average rule after fees.
+
+66
+00:04:40,787 --> 00:04:47,023
+Coin by coin, after fees, the moving average rule was profitable on one pair out of 93.
+
+67
+00:04:47,564 --> 00:04:48,747
+MACD on two.
+
+68
+00:04:49,389 --> 00:04:52,417
+RSI on 13, from far fewer trades.
+
+69
+00:04:52,878 --> 00:04:54,442
+The coin flip, on none.
+
+70
+00:04:55,023 --> 00:04:57,409
+Here is the part most scalping videos skip.
+
+71
+00:04:57,930 --> 00:05:02,141
+A fee is a fixed cost, but a five-minute trade is a small move.
+
+72
+00:05:02,602 --> 00:05:07,635
+On these coins, the average five-minute trade moved about half a percent from entry to exit.
+
+73
+00:05:08,036 --> 00:05:11,304
+So the fee ate about 13% of the average move.
+
+74
+00:05:11,805 --> 00:05:16,477
+Run the same rules on 15-minute candles and the fee is about 8% of the move.
+
+75
+00:05:16,878 --> 00:05:19,184
+On one-hour candles, about 4%.
+
+76
+00:05:19,505 --> 00:05:21,309
+But be careful with what that means.
+
+77
+00:05:21,690 --> 00:05:24,197
+The slower charts did not rescue these rules.
+
+78
+00:05:24,537 --> 00:05:28,708
+On 15 minutes and one hour, the same entries still lost after fees.
+
+79
+00:05:29,109 --> 00:05:31,234
+A slower chart makes the fee smaller.
+
+80
+00:05:31,595 --> 00:05:33,801
+It does not create an edge that was never there.
+
+81
+00:05:34,362 --> 00:05:35,786
+One rule did clear the fee.
+
+82
+00:05:36,367 --> 00:05:43,245
+RSI on the one-hour chart, by about 0.01% per trade, over 841 trades.
+
+83
+00:05:43,585 --> 00:05:47,355
+The statistical range on that runs from a clear loss to a clear gain.
+
+84
+00:05:47,696 --> 00:05:48,718
+That is not an edge.
+
+85
+00:05:48,979 --> 00:05:50,623
+That is not enough trades to know.
+
+86
+00:05:51,185 --> 00:05:52,548
+Three honest limits.
+
+87
+00:05:53,029 --> 00:05:55,235
+First, these results are optimistic.
+
+88
+00:05:55,576 --> 00:06:01,310
+We gave every trade a perfect entry at the next open and no slippage, and real fills are worse.
+
+89
+00:06:01,791 --> 00:06:07,887
+Second, we tested today's list of coins across six months, and coins that died along the way are not in it.
+
+90
+00:06:08,368 --> 00:06:16,809
+Third, these are the textbook rules, not any one trader's personal system, and this says nothing about a skilled trader reading the chart by hand.
+
+91
+00:06:17,230 --> 00:06:20,338
+What it does show is narrower and harder to argue with.
+
+92
+00:06:20,719 --> 00:06:28,479
+The entry signals that most tutorials teach, on the timeframe most tutorials use, carried no measurable information about the next move.
+
+93
+00:06:28,799 --> 00:06:32,709
+And on that timeframe, the fee is a large slice of every trade.
+
+94
+00:06:33,090 --> 00:06:36,699
+If there is no edge in the entry, only two things change the result.
+
+95
+00:06:37,040 --> 00:06:40,288
+The cost of each trade, and the size of each trade's move.
+
+96
+00:06:40,729 --> 00:06:43,516
+A limit order that rests on the book pays the lower fee.
+
+97
+00:06:43,958 --> 00:06:52,018
+A trade planned around a level before price gets there, instead of a reaction after a candle closes, can aim for a larger move with the same risk.
+
+98
+00:06:52,479 --> 00:06:53,702
+Neither is a promise.
+
+99
+00:06:54,123 --> 00:06:56,609
+They are the two things this test says matter.
+
+100
+00:06:57,131 --> 00:07:01,582
+Next, we test pre-planned limit levels on the exact same six months of data.
+
+101
+00:07:02,023 --> 00:07:04,529
+Subscribe to see if the maths finally flips.
+
+102
+00:07:04,991 --> 00:07:06,534
+This has been Lumin Futures.
