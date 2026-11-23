@@ -1,0 +1,2 @@
+# Lumin Studio Python deps (session + Modal client). Pinned.
+modal==1.6.4

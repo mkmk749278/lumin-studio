@@ -1,0 +1,5 @@
+# Local forced alignment for scripts/align_audio.py (CPU wheels):
+#   pip install -r requirements-align.txt --index-url https://download.pytorch.org/whl/cpu
+torch==2.8.0
+torchaudio==2.8.0
+numpy

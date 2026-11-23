@@ -1,0 +1,33 @@
+# --- Lumin Studio: no heavy binaries, no secrets (CLAUDE.md §2C) ---
+node_modules/
+build/
+out/
+renders/
+.remotion/
+*.mp4
+*.mov
+*.mkv
+*.webm
+*.wav
+*.mp3
+*.m4a
+*.aac
+*.flac
+*.zip
+*.tar
+*.tar.gz
+*.7z
+.env
+.env.*
+*.pem
+*.key
+modal.toml
+.modal.toml
+__pycache__/
+*.pyc
+.venv/
+# raw multi-MB inputs stay out of git (Modal Volume / Drive / R2)
+data/raw/
+episodes/*/assets/
+episodes/*/audio/
+.DS_Store

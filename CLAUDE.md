@@ -1,0 +1,167 @@
+# Lumin Studio: Claude Code guide
+
+Programmatic video studio for the **Lumin: Crypto Signals** YouTube channel (the Google Play app for Binance
+USD-M perpetual futures traders). Every rule here is permanent; change one only with the owner's word, and
+write the reason beside it.
+
+## Every session
+1. Read this file, then the open episode's `episodes/<id>/brief.md` and its `handoff.md` if one exists.
+2. Work on the session's branch; commit and push at least every 30–45 minutes and at each stage's end; land on
+   `main` through a PR. Never push to `main` directly.
+3. Times told to the owner in chat are **IST** ("11:00 AM IST"; IST = UTC + 5:30). Files and on-screen dates
+   stay UTC, day-first (`05 JAN 2026`).
+4. The owner works **only from an Android phone**: every script is headless CLI with clear stdout progress,
+   every result opens on a phone (a link, a file sent with SendUserFile, a click-to-copy block).
+
+## 1. Channel and story
+- **Identity:** clinical, data-first **quant-desk futures forensics** (institutional desk look). Zero hype, zero
+  price targets, zero "crypto guru" energy. Global English, USD/USDT only, no regional framing.
+- **Brand isolation (hard line):** this repo and channel are 100% separate from any other channel or personal
+  brand. Nothing here, on screen, in descriptions or comments names or cross-promotes another channel, repo or
+  person. Our voice is used by this channel only.
+- **Market scope:** Binance USD-M perpetuals, ~75 large/mid-cap pairs plus high-volatility 24h top gainers/losers.
+- **Story arc.** The Lumin engine is moving from reactive bar-close indicator triggers (5m/15m/1h) to an hourly
+  analyst that outputs pre-planned limit setups executed deterministically (fixed Entry, SL, TP).
+  - *Phase 1 (launch, weeks 1–3):* forensic breakdowns of why reactive indicator-chasing fails, from our own
+    closed-signal dataset and market-microstructure math. Lumin is a soft plug (mid-roll, pinned comment) as the
+    engine being rebuilt in the open.
+  - *Phase 2 (after the upgrade):* live setup autopsies, monthly open-ledger audits (every winner and loser),
+    direct Play Store conversion.
+- **Launch slate** (packages are drafts until each passes §6's package rules and the facts gate):
+  1. *We Analyzed 4,900 Crypto Futures Signals. Here's Why 5m Indicators Fail.* — thumbnail `4,900 TRADES`
+  2. *Why 90% of Traders Get Liquidated Shorting 24h Top Gainers* — thumbnail `STOP HUNT`
+  3. *Market Orders vs. Pre-Planned Limit Setups (Math Over 1,000 Futures Trades)* — thumbnail `LIMIT VS MARKET`
+
+  Open issues on the slate, found at bootstrap: titles 1 and 3 are over the 60-character limit; title 1 has a
+  full stop where §6 forbids only colons but reads as two titles; "4,900" and "90%" are claims that need a row
+  in `claims.csv` before they appear anywhere, and title 1's verdict ("5m Indicators Fail") must be what the
+  dataset actually shows, decided after `analyze_dataset.py` runs — never before.
+
+## 2. Infrastructure (non-negotiable)
+### A. Zero GitHub Actions
+- **Never** create `.github/workflows/` or any Actions YAML here. GitHub is a source vault only. All rendering,
+  audio processing and heavy compute run on **Modal**. *Why:* heavy media jobs on GitHub runners can get an
+  account's repositories disabled.
+
+### B. Modal (`modal>=1.6`, pinned 1.6.4)
+- Workspace: Modal Starter, $30/month free credit with a **hard $29 monthly usage limit**. State the estimated
+  cost of every render before a big one; ask before anything that could pass the free credit.
+- SDK: `modal.Image.add_local_dir(..., ignore=[...])` / `add_local_file(...)`. Never `modal.Mount` or
+  `Image.copy_local_dir`.
+- `scaledown_window=2` on every render function. Plain `@app.function` only: never Sandboxes, never
+  `non_preemptible=True` (3x cost), never pin a `region` (+15–75%).
+- **Bundle once, fan out:** one container runs `npm ci` (cached image layer) + `remotion bundle` onto the
+  shared Volume `lumin-render-vol`; then 25–35 CPU containers (`cpu=4.0, memory=8192`) render non-overlapping
+  `--frames=start-end` video-only slices via `.starmap()`; `stitch_master` concats losslessly.
+- **No audio clicks:** never concatenate per-chunk AAC. Chunks render `--muted`; the single mastered WAV is
+  muxed once at the stitch (`-map 0:v -map 1:a -c:v copy -c:a aac -b:a 320k`).
+- 3D is optional and rare (headless Blender on `gpu="T4"`/`"L4"` for an occasional conceptual metaphor);
+  90%+ of visuals are 2D/2.5D React/SVG in Remotion.
+- Credentials: `MODAL_TOKEN_ID` / `MODAL_TOKEN_SECRET` as environment variables of the cloud environment —
+  never in git, chat or docs.
+
+### C. Repo hygiene
+- Never commit heavy binaries or secrets. `.gitignore` covers `node_modules/`, `out/`, `build/`, media
+  (`*.mp4 *.mov *.wav *.mp3 *.zip` …), `.env*`, `data/raw/`, `episodes/*/assets|audio/`. Large media lives on
+  the Modal Volume or Google Drive / Cloudflare R2. Vendored OFL fonts (`public/fonts/`, ~170 KB) are the
+  only binaries in git.
+- Optional GitLab mirror: `git remote set-url --add --push origin https://gitlab.com/<user>/lumin-studio.git`
+  (after re-adding the GitHub push URL the same way).
+
+## 3. Layout
+```
+CLAUDE.md  .gitignore  package.json  tsconfig.json  remotion.config.ts  requirements*.txt
+modal_render.py                 Modal: prepare_bundle -> render_chunk x N (.starmap) -> stitch_master (+WAV mux)
+scripts/fetch_market_data.py    geo-block-safe Binance USD-M klines / funding -> data/market/
+scripts/analyze_dataset.py      closed-signal CSV/JSON -> data/stats/<name>/*.json (with input sha256)
+scripts/align_audio.py          narration -> words.json (ElevenLabs timestamps or local MMS forced alignment)
+scripts/audio_master.py         VO (+bed) -> one 48 kHz/24-bit WAV at -14 LUFS / -1.5 dBTP, verified
+scripts/composition_meta.mjs    composition metadata as JSON (used by modal_render.py)
+data/market/  data/stats/       cached, deterministic inputs — the ONLY data a render reads
+src/Root.tsx                    FuturesLabLong 3840x2160@30 · TradeAutopsyShort 1080x1920@30 · LuminDemo 1920x1080@30 (5 s)
+src/theme/tokens.ts             colours, type, springs, safe zones
+src/components/                 TerminalBackdrop CandleReplay LuminAlertCard DatasetChart LiquidityOverlay
+                                KineticCallout DisclaimerFooter
+src/compositions/               FuturesLabLong (scene list) · TradeAutopsyShort (scene list) · LuminDemo
+src/lib/                        Stage (design canvas -> output size), cues (word -> frame), market, fonts
+episodes/_template/             brief.md · script.md · claims.csv — copy to episodes/<id>/ for each episode
+```
+
+## 4. Market data (geo-block-safe)
+- Cloud sessions and Modal run on US IPs where `fapi.binance.com` returns **HTTP 451** (measured at bootstrap;
+  `api.bybit.com` returned 403 too). So `data.binance.vision` archives (daily + monthly klines, monthly
+  `fundingRate`) are the **primary** source; only the current UTC day falls back to live REST
+  fapi → Bybit linear → OKX swap, each attempt logged.
+- A series that mixes venues says so in `meta.sources` (counted per rendered candle). A Binance-labelled chart
+  is built from Binance bars only: pick windows that end at 00:00 UTC of a published day when the chart says
+  "Binance".
+- **Render determinism:** Remotion reads only `data/market/` and `data/stats/` JSON (imported at build time).
+  Never an HTTP request inside a render frame. The still-forming bar is always dropped.
+
+## 5. Visual system
+| Token | Value | Use |
+|---|---|---|
+| canvas | `#070B12` | background (never pure black) |
+| panel / hairline | `#0D131F` / `#1E293B` | cards, 1px borders |
+| grid | `#162032` | drifting coordinate grid (never a flat void) |
+| bull | `#10B981` | up candles, limit fills, TP |
+| bear | `#F43F5E` | down candles, stop hunts, liquidations, invalidations |
+| telemetry | `#22D3EE` | price line, crosshair, focus |
+| warning | `#F59E0B` | funding stress, warning zones, honesty labels |
+| text / muted | `#F8FAFC` / `#94A3B8` | headings / axis labels (muted never carries a fact alone) |
+
+- Type: Inter (headlines) + JetBrains Mono with `tabular-nums` for every price, time, % and PnL. Colours only
+  from `src/theme/tokens.ts`.
+- **Motion:** continuous evolution (candles printing, camera into the wick, crosshair, pulsing bands). No
+  static chart longer than 1.5 s. Everything is a pure function of the frame: no CSS keyframes, no
+  `Math.random`, no `Date.now`, no network.
+- **Semantic 1:1 lock:** each spoken event ("liquidity sweep", "limit fill", "stop loss hit", "4,900 signals")
+  triggers its visual within 100 ms, keyed with `cueFrame()` from `words.json` — never hand-typed frames.
+- **Safe zones:** long-form — the last 15 s carry no critical text/data (end-screen zone). Shorts — keep the
+  bottom 22% and right 15% clear (`SHORT_SAFE` in `TradeAutopsyShort.tsx`).
+- Author on the design canvas (1920x1080 / 1080x1920) inside `<Stage>`; 4K is the same layout at scale 2.
+- **Honesty labels:** any setup card, level or number that is not from a logged Lumin signal or a cited
+  record carries an on-screen label (`ILLUSTRATIVE — NOT A LOGGED SIGNAL`, `ILLUSTRATIVE VALUES`).
+
+## 6. Editorial, audio and compliance
+- **Packaging first:** lock the title (< 60 characters, no colons), the thumbnail (2–3 bold words, never
+  repeating the title) and the 0:00–0:15 click-contract in `brief.md` before any script. The opening's first
+  sentence confirms the thumbnail's promise.
+- **Facts:** every number, date and name on screen or in narration has a `claims.csv` row (source file or URL,
+  exact figure, verified yes/no). Dataset figures come only from `analyze_dataset.py` outputs, cited by file and
+  input sha256. Never state a figure from memory, never fabricate or round a performance number into a better
+  one, never imply live results from a backtest or a counterfactual.
+- **Units:** PnL % leads; R is shown beside it, never alone (R divides by each trade's own stop, which equalises
+  nothing at a fixed notional and can flip a sign). Say whether a figure is gross or net of fees.
+- **Voice:** one fresh ElevenLabs voice used **only** by this channel (chosen by the owner; ID goes in
+  `config/voice.json` when set). TTS text: punctuation-driven pacing (`,` `—` `.`), no bracketed emotion tags,
+  no `...`; numbers and acronyms spelled for speech (`four thousand nine hundred signals`, `five-minute candle`,
+  `U-S-D-T`).
+- **Mastering:** VO to **-14 LUFS, -1.5 dBTP**; ambient bed at -25 LUFS, sidechain-ducked under voice
+  (`audio_master.py` re-measures and fails if the master misses target).
+- **Disclosure:** never mention "AI voice" or ElevenLabs in public text; use YouTube Studio's altered-content
+  setting only as the owner decides.
+- **YouTube finance guardrails:** no profit guarantees, fixed income or unrealistic win rates — frame every
+  video around probability, risk-to-reward, execution mechanics and invalidation. No synthetic human trader
+  avatar. Every long-form video carries a distinct analytical thesis (no ticker-swap templates).
+- **Footer + description line:** `Market and execution analysis for educational purposes only. Perpetual
+  futures carry high risk of liquidation.` (`DisclaimerFooter` on every chart segment; one line in every
+  description.)
+- **Owner gates:** the owner approves the package+brief, the narration, the audio and the review cut. Never send
+  a draft, test or placeholder; tests stay inside the session.
+
+## 7. Commands
+```bash
+npm ci && npx tsc --noEmit
+B=/opt/pw-browsers/chromium_headless_shell-1243/chrome-headless-shell-linux64/chrome-headless-shell   # session only
+npx remotion still src/index.ts LuminDemo out/f100.png --frame=100 --browser-executable=$B
+python3 scripts/fetch_market_data.py klines --symbol BTCUSDT --interval 15m --start 2026-11-21 --end 2026-11-23 \
+    --out data/market/sample_btcusdt_15m.json
+python3 scripts/analyze_dataset.py data/raw/<file>.csv --out data/stats/<name> [--outcome pct|r]
+python3 scripts/align_audio.py --audio vo.wav --text vo.txt --out episodes/<id>/words.json
+python3 scripts/audio_master.py --vo vo.wav [--bed bed.wav] --out master.wav
+pip install -r requirements.txt && modal run modal_render.py --composition LuminDemo --workers 2   # smoke test
+modal run modal_render.py --composition FuturesLabLong --scale 0.5 --workers 30 --audio master.wav
+```
+In a cloud session, Remotion's own browser download is blocked: pass `--browser-executable` (above). On
+Modal the image runs `npx remotion browser ensure` at build time.
