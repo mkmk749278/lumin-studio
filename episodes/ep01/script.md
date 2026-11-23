@@ -1,4 +1,4 @@
-# ep01 — narration script: 5-Minute Scalping Was No Better Than a Coin Flip
+# ep01 — narration script v1 (SUPERSEDED by script_v2.md, 23 NOV 2026)
 
 > Status: draft for the owner's approval (narration gate). Opening written first and checked against the promise.
 > Every figure is a row in `claims.csv`. Spoken text only below the headings; cue lines are stripped before

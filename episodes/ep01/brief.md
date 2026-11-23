@@ -25,7 +25,12 @@ strategies are the most-watched futures topic we measured (top long videos ~2.0M
 - **Honest limits, said on screen:** no slippage modelled (real results are worse); today's coin list applied
   backwards; textbook rules, not any one creator's exact system; this measures rules, not discretionary skill.
 
-## Package (title < 60, no colon; thumbnail never repeats the title)
+## Package — LOCKED by the owner, 23 NOV 2026
+- **Title:** `5-Minute Scalping Was No Better Than a Coin Flip` (48)
+- **Thumbnail Test & Compare (owner, 23 NOV 2026):** main `1 IN 93` · challenger `117,000 TRADES` (true: 117,634).
+- **Narration:** `script_v2.md` (the owner's five fixes on v1); runtime about 7:30, no padding.
+
+## Package options considered (superseded by the lock above)
 Recommended:
 - **Title:** `5-Minute Scalping Was No Better Than a Coin Flip` (48)
 - **Thumbnail:** `1 OF 93` beside a coin mid-flip over a 5-minute chart.
@@ -49,4 +54,4 @@ actually changes the maths (fewer, larger moves; limit entries that pay the lowe
 ## Lumin
 None in this episode beyond the channel name (owner, 23 NOV 2026: high-demand crypto first, not the app).
 
-## Target length: about 7 minutes (1,030 words of narration)
+## Target length: about 7:30 (script_v2: 1,180 words)

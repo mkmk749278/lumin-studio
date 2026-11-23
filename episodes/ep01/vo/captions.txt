@@ -1,0 +1,63 @@
+We ran the three most popular five-minute scalping rules on 117,000 crypto futures trades, and a coin flip did just as well.
+
+After fees, out of 93 coins, the best-known rule made money on exactly one.
+
+This is not an opinion about scalping. It is six months of Binance futures candles, the same exits for every rule, and the fee charged on every single trade. Here is what the data showed, and why it happens.
+
+We took every five-minute candle from the first of May to the end of October, 2026, for 93 perpetual futures pairs on Binance. Bitcoin, Ethereum, Solana, and 90 other coins, straight from Binance's own public archive.
+
+Then we coded the three rules you will find in almost every scalping tutorial. One, the moving average cross, the 9 EMA crossing the 21 EMA. Two, the RSI reversal, buying when RSI climbs back above 30 and selling when it drops back below 70. Three, the MACD cross, when the MACD line crosses its signal line.
+
+All three get the filter every tutorial adds. Only buy above the 200 EMA, only sell below it.
+
+And then a fourth strategy that should not work at all. A coin flip. Random candles, a random direction, traded just as often as the moving average rule.
+
+Every trade, from every rule, is managed the same way. The signal has to appear on a closed candle. We enter at the open of the next candle, so nothing peeks into the future. The stop goes one average true range away, the target one and a half ranges away. If price touches both inside one candle, we count the loss.
+
+We charge 0.07% round-trip. That is Binance's standard rate when one side gets a maker fill and the other is a market order. Real scalpers using market entries and stop-losses often pay 0.10%, so this test is actually generous.
+
+So the only thing that differs between the four strategies is the entry. That is the whole question. Does the entry signal know anything?
+
+Before fees, here is the average result per trade. The moving average cross, −0.004%. MACD, zero. RSI, −0.006%. And the coin flip, −0.005%.
+
+Those differences are noise. Draw the statistical range around each one and they all overlap, and all of them sit on zero. Over 117,000 trades, the most popular entry signal on a five-minute chart did exactly what a random entry did.
+
+Look at the win rates. All four win about 40% of the time. That is not a coincidence. With a target one and a half times farther than the stop, price that moves at random reaches the stop first about 60% of the time. Forty percent wins is exactly what no edge looks like with this setup.
+
+Here is what that looks like on one real trade. Bitcoin, the first of July, 2026, on the five-minute chart.
+
+At 1:40 a.m., UTC, the 9 EMA crosses above the 21. A textbook long. But look at where it fires. Bitcoin has already climbed about 870 dollars off its low in the last half hour. The signal only arrives after the move it is reacting to.
+
+The trade enters at the next open, 58,872. The stop sits one average range below, the target one and a half above.
+
+Twenty minutes later, a single wick dips through the stop by less than a third of a range. Ordinary noise for that hour. The trade is out, down 0.32%.
+
+Then the fee. Minus 0.39%.
+
+And by 3:50, Bitcoin trades straight through the old target. The idea was not wrong. The entry was late, the stop sat inside the noise, and the fee was charged either way.
+
+Now charge the fee on every trade. Every strategy loses, about 0.07% per trade, because that is the fee and there was no edge to pay it.
+
+Stack every trade the moving average rule took across all 93 pairs together, without compounding, and the fees alone come to more than 82 full position sizes. The total loss is more than 87.
+
+It was not one bad month either. Every month from May to October was negative for the moving average rule after fees.
+
+Coin by coin, after fees, the moving average rule was profitable on one pair out of 93. MACD on two. RSI on 13, from far fewer trades. The coin flip, on none.
+
+Here is the part most scalping videos skip. A fee is a fixed cost, but a five-minute trade is a small move. On these coins, the average five-minute trade moved about half a percent from entry to exit.
+
+So the fee ate about 13% of the average move. Run the same rules on 15-minute candles and the fee is about 8% of the move. On one-hour candles, about 4%.
+
+But be careful with what that means. The slower charts did not rescue these rules. On 15 minutes and one hour, the same entries still lost after fees. A slower chart makes the fee smaller. It does not create an edge that was never there.
+
+One rule did clear the fee. RSI on the one-hour chart, by about 0.01% per trade, over 841 trades. The statistical range on that runs from a clear loss to a clear gain. That is not an edge. That is not enough trades to know.
+
+Three honest limits. First, these results are optimistic. We gave every trade a perfect entry at the next open and no slippage, and real fills are worse. Second, we tested today's list of coins across six months, and coins that died along the way are not in it. Third, these are the textbook rules, not any one trader's personal system, and this says nothing about a skilled trader reading the chart by hand.
+
+What it does show is narrower and harder to argue with. The entry signals that most tutorials teach, on the timeframe most tutorials use, carried no measurable information about the next move. And on that timeframe, the fee is a large slice of every trade.
+
+If there is no edge in the entry, only two things change the result. The cost of each trade, and the size of each trade's move. A limit order that rests on the book pays the lower fee. A trade planned around a level before price gets there, instead of a reaction after a candle closes, can aim for a larger move with the same risk.
+
+Neither is a promise. They are the two things this test says matter.
+
+Next, we test pre-planned limit levels on the exact same six months of data. Subscribe to see if the maths finally flips.

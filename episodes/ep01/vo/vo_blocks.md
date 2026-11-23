@@ -1,13 +1,13 @@
 # Recording blocks: ep01
 
-Voice **Reid** (`1PdyZcb9N22kC6entd5C`). 1 block(s), 1030 words, about 6.9 minutes at 150 words a minute.
+Voice **Reid** (`1PdyZcb9N22kC6entd5C`). 1 block(s), 1180 words, about 7.9 minutes at 150 words a minute.
 
 Paste each block as it is (the blank lines are pauses), keep the same settings for every block, and save each take under the file name shown. Send all the files back together.
 
-## Block 1 of 1: save as `ep01_b01.mp3` (5,746 characters)
+## Block 1 of 1: save as `ep01_b01.mp3` (6,599 characters)
 
 ```
-We ran the three most popular five-minute scalping rules on one hundred seventeen thousand crypto futures trades, and a coin flip did just as well.
+We ran the three most popular five-minute scalping rules on one hundred and seventeen thousand crypto futures trades, and a coin flip did just as well.
 
 After fees, out of ninety-three coins, the best-known rule made money on exactly one.
 
@@ -15,31 +15,43 @@ This is not an opinion about scalping. It is six months of Binance futures candl
 
 We took every five-minute candle from the first of May to the end of October, twenty twenty-six, for ninety-three perpetual futures pairs on Binance. Bitcoin, Ethereum, Solana, and ninety other coins, straight from Binance's own public archive.
 
-Then we coded the three rules you will find in almost every scalping tutorial. One, the moving average cross, the nine E-M-A crossing the twenty-one E-M-A. Two, the R-S-I reversal, buying when R-S-I climbs back above thirty and selling when it drops back below seventy. Three, the M-A-C-D cross, when the M-A-C-D line crosses its signal line.
+Then we coded the three rules you will find in almost every scalping tutorial. One, the moving average cross, the nine E-M-A crossing the twenty-one E-M-A. Two, the R-S-I reversal, buying when R-S-I climbs back above thirty and selling when it drops back below seventy. Three, the Mac-D cross, when the Mac-D line crosses its signal line.
 
 All three get the filter every tutorial adds. Only buy above the two hundred E-M-A, only sell below it.
 
-And then a fourth strategy that should not work at all. A coin flip. Random bars, a random direction, traded just as often as the moving average rule.
+And then a fourth strategy that should not work at all. A coin flip. Random candles, a random direction, traded just as often as the moving average rule.
 
 Every trade, from every rule, is managed the same way. The signal has to appear on a closed candle. We enter at the open of the next candle, so nothing peeks into the future. The stop goes one average true range away, the target one and a half ranges away. If price touches both inside one candle, we count the loss.
 
-And every trade pays a fee of seven hundredths of a percent of the position, entry and exit together. That is a limit order going in and a market order coming out, at Binance's standard rates. A scalper using market orders both ways pays more, ten hundredths.
+We charge zero point zero seven percent round-trip. That is Binance's standard rate when one side gets a maker fill and the other is a market order. Real scalpers using market entries and stop-losses often pay zero point one zero percent, so this test is actually generous.
 
 So the only thing that differs between the four strategies is the entry. That is the whole question. Does the entry signal know anything?
 
-Before fees, here is the average result per trade. The moving average cross, minus four thousandths of a percent. M-A-C-D, zero. R-S-I, minus six thousandths. And the coin flip, minus five thousandths.
+Before fees, here is the average result per trade. The moving average cross, minus zero point zero zero four percent. Mac-D, zero. R-S-I, minus zero point zero zero six percent. And the coin flip, minus zero point zero zero five percent.
 
-Those differences are noise. Draw the statistical range around each one and they all overlap, and all of them sit on zero. Over one hundred seventeen thousand trades, the most popular entry signal on a five-minute chart did exactly what a random entry did.
+Those differences are noise. Draw the statistical range around each one and they all overlap, and all of them sit on zero. Over one hundred and seventeen thousand trades, the most popular entry signal on a five-minute chart did exactly what a random entry did.
 
-Look at the win rates. All four win about forty percent of the time. That is not a coincidence. With a target one and a half times farther than the stop, price that moves at random hits the stop first about sixty percent of the time. Forty percent wins is exactly what no edge looks like with this bracket.
+Look at the win rates. All four win about forty percent of the time. That is not a coincidence. With a target one and a half times farther than the stop, price that moves at random reaches the stop first about sixty percent of the time. Forty percent wins is exactly what no edge looks like with this setup.
 
-Now charge the fee. Every strategy loses, about seven hundredths of a percent per trade, because that is the fee and there was no edge to pay it.
+Here is what that looks like on one real trade. Bitcoin, the first of July, twenty twenty-six, on the five-minute chart.
 
-Add it up across every trade the moving average rule took, and the losses after fees add up to more than eight thousand seven hundred percent of position size. Not because the rule was terrible. Because it traded a lot, and every trade paid.
+At one forty in the morning, U-T-C, the nine E-M-A crosses above the twenty-one. A textbook long. But look at where it fires. Bitcoin has already climbed about eight hundred and seventy dollars off its low in the last half hour. The signal only arrives after the move it is reacting to.
+
+The trade enters at the next open, fifty-eight thousand eight hundred and seventy-two. The stop sits one average range below, the target one and a half above.
+
+Twenty minutes later, a single wick dips through the stop by less than a third of a range. Ordinary noise for that hour. The trade is out, down zero point three two percent.
+
+Then the fee. Minus zero point three nine percent.
+
+And by ten to four, Bitcoin trades straight through the old target. The idea was not wrong. The entry was late, the stop sat inside the noise, and the fee was charged either way.
+
+Now charge the fee on every trade. Every strategy loses, about zero point zero seven percent per trade, because that is the fee and there was no edge to pay it.
+
+Stack every trade the moving average rule took across all ninety-three pairs together, without compounding, and the fees alone come to more than eighty-two full position sizes. The total loss is more than eighty-seven.
 
 It was not one bad month either. Every month from May to October was negative for the moving average rule after fees.
 
-Coin by coin, after fees, the moving average rule was profitable on one pair out of ninety-three. M-A-C-D on two. R-S-I on thirteen, from far fewer trades. The coin flip, on none.
+Coin by coin, after fees, the moving average rule was profitable on one pair out of ninety-three. Mac-D on two. R-S-I on thirteen, from far fewer trades. The coin flip, on none.
 
 Here is the part most scalping videos skip. A fee is a fixed cost, but a five-minute trade is a small move. On these coins, the average five-minute trade moved about half a percent from entry to exit.
 
@@ -47,7 +59,7 @@ So the fee ate about thirteen percent of the average move. Run the same rules on
 
 But be careful with what that means. The slower charts did not rescue these rules. On fifteen minutes and one hour, the same entries still lost after fees. A slower chart makes the fee smaller. It does not create an edge that was never there.
 
-One rule did clear the fee. R-S-I on the one-hour chart, by about one hundredth of a percent per trade, over eight hundred forty-one trades. The statistical range on that runs from a clear loss to a clear gain. That is not an edge. That is not enough trades to know.
+One rule did clear the fee. R-S-I on the one-hour chart, by about zero point zero one percent per trade, over eight hundred and forty-one trades. The statistical range on that runs from a clear loss to a clear gain. That is not an edge. That is not enough trades to know.
 
 Three honest limits. First, these results are optimistic. We gave every trade a perfect entry at the next open and no slippage, and real fills are worse. Second, we tested today's list of coins across six months, and coins that died along the way are not in it. Third, these are the textbook rules, not any one trader's personal system, and this says nothing about a skilled trader reading the chart by hand.
 
@@ -55,7 +67,7 @@ What it does show is narrower and harder to argue with. The entry signals that m
 
 If there is no edge in the entry, only two things change the result. The cost of each trade, and the size of each trade's move. A limit order that rests on the book pays the lower fee. A trade planned around a level before price gets there, instead of a reaction after a candle closes, can aim for a larger move with the same risk.
 
-Neither is a promise. They are the two variables this test says matter. And on this channel, we will measure them the same way we measured this. Every trade counted, the fee charged, the losers shown.
+Neither is a promise. They are the two things this test says matter.
 
-The data, the rules and the exact settings are in the description. If you trade five-minute charts, run your own rules against a coin flip before you pay another fee.
+Next, we test pre-planned limit levels on the exact same six months of data. Subscribe to see if the maths finally flips.
 ```

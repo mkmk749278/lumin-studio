@@ -16,3 +16,11 @@ id,claim,exact_figure,source,source_detail,verified,checked_on,notes
 15,RSI on 1h cleared fees by about one hundredth of a percent over 841 trades,+0.0103%,data/stats/ep01_scalping.json,results['1h|rsi_revert'],yes,2026-11-23,CI before fees -0.126 to +0.294
 16,MACD before fees,0.000%,data/stats/ep01_scalping.json,results['5m|macd_trend'].avg_gross_pct (-0.0001),yes,2026-11-23,
 17,RSI before fees,-0.006%,data/stats/ep01_scalping.json,results['5m|rsi_revert'].avg_gross_pct,yes,2026-11-23,
+18,Sample trade: BTCUSDT 5m EMA 9/21 long signal,01 JUL 2026 01:40 UTC,data/market/ep01_sample_trade.json,"trade.signal_time_utc; archive sha256 in meta",yes,2026-11-23,scripts/ep01_sample_trade.py
+19,Bitcoin had climbed about $870 off its low in the last half hour,872.0,data/market/ep01_sample_trade.json,"signal_close 58872.0 minus the lowest low of the 6 candles to 01:40 (run_before_signal_atr 4.57 x ATR 190.8)",yes,2026-11-23,
+20,Entry at the next open,"58,872.1",data/market/ep01_sample_trade.json,trade.entry,yes,2026-11-23,
+21,Stop hit 20 minutes later by a wick under a third of a range through,"02:05 UTC, low 58,632.4 vs stop 58,681.3 (0.26 ATR)",data/market/ep01_sample_trade.json,trade.stop_hit_time_utc / stop_wick_low / stop,yes,2026-11-23,
+22,Sample trade result before / after fee,−0.32% / −0.39%,data/market/ep01_sample_trade.json,trade.gross_pct / net_pct,yes,2026-11-23,
+23,Price passed the old target at 03:50 UTC,"59,158.3 passed; high 59,298.4 within 2 h",data/market/ep01_sample_trade.json,trade.target_passed_after_stop_utc,yes,2026-11-23,
+24,Fees alone over all EMA-rule trades,more than 82 position sizes,our calculation,"117,634 trades x 0.07% = 8,234% = 82.3 position sizes (no compounding)",yes,2026-11-23,total loss 8,740.9% = 87.4 (claim 9)
+25,Thumbnail challenger figure,"117,000 TRADES",data/stats/ep01_scalping.json,results['5m|ema_cross'].n = 117634,yes,2026-11-23,rounded down
