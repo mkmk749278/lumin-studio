@@ -113,6 +113,7 @@ scripts/composition_meta.mjs    composition metadata as JSON (render.yml, modal_
 scripts/vo_blocks.py            approved script -> <=10,000-character recording blocks + lint
 scripts/vo_enhance.py           owner's takes -> Resemble Enhance -> joined vo.wav (+ vo_raw.wav)
 scripts/gdrive.sh               Drive up / pull / sync / ls (folder Lumin-Studio)
+scripts/gemini_handoff.sh       Gemini handoff: new / push / pull / status (§8)
 config/voice.json               the channel voice (Reid) and its settings
 modal_gpu.py                    Modal T4: Resemble Enhance per block (vo_enhance.py --backend modal)
 scripts/termux_secrets.sh       the owner's one Termux command for every repo secret
@@ -216,3 +217,24 @@ modal run modal_render.py --composition FuturesLabLong --scale 0.5 --workers 30 
 ```
 In a cloud session, Remotion's own browser download is blocked: pass `--browser-executable` (above). On
 Modal the image runs `npx remotion browser ensure` at build time.
+
+## 8. The Gemini handoff: Drive bus, Gmail bell (owner, 26 NOV 2026)
+- The owner's Gemini workspace agent (memory, custom audit skills, Drive, YouTube, live web; it listens to audio and
+  watches video) does the **first pass** at seven gates so the session spends its usage on building: `research`,
+  `narration-review`, `fact-check`, `audio-audit` (enhanced blocks, before audio lock), `cut-audit` (every review
+  cut), `fresh-facts`, `analytics-audit`. *Why:* owner, 26 NOV 2026: better films, simpler, less usage; Gemini hears
+  and watches directly and keeps the channel's memory, which a stateless API call lacks. No raw Gemini API calls for
+  audits.
+- **The loop:** `scripts/gemini_handoff.sh new <id> <task>` writes `episodes/<id>/handoff/to_gemini.md` from
+  `prompts/gemini_handoff.md` → fill every `<fill: …>` line with Drive view links → `push <id> <task> [--attach FILE …]`
+  lints it (no placeholders, secrets, email addresses or names from outside this channel), uploads it to
+  `Lumin-Studio/episodes/<id>/handoff/to_gemini.md` and prints the wake-up email → the session sends it with the
+  **Gmail connector** (`send_message`, plain text, subject `[GEMINI-HANDOFF] lumin-studio <id> <task>`, to the owner's
+  own address: never written in this public repo) → carry on, never wait or poll → at the next step
+  `pull <id>` saves the reply to `episodes/<id>/review/gemini_<task>.md` (exit 4 = none yet: search Gmail for
+  `[GEMINI-RESULT]`, Gemini's fallback; if neither, say so in one line and continue).
+- **Gemini's answer is a list of leads:** every point is checked against code, `words.json` and a rendered still in
+  `review/gemini_<task>_check.md` (CONFIRMED / PARTLY / NOT CONFIRMED) before any fix; every fact still gets its
+  source opened by us, and dataset figures come only from `analyze_dataset.py`.
+- **Hard stops:** no 4K master before the Gemini cut audit is checked and the owner approves the cut; Gemini never
+  writes to the repo or decides a gate. The owner's one-time Gemini setup lives in the owner's Gemini, not in git.
