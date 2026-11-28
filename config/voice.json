@@ -6,11 +6,11 @@
   "block_max_chars": 10000,
   "settings": {
     "_note": "Fill in the exact model and sliders the owner uses on the first block, then keep them for every block and every episode.",
-    "model": null,
-    "stability": null,
-    "similarity": null,
-    "style": null,
-    "speaker_boost": null
+    "model": "eleven_v4",
+    "stability": 0.0,
+    "similarity": 0.70,
+    "style": 0.0,
+    "speaker_boost": true
   },
   "post": "scripts/vo_enhance.py: Resemble Enhance on each block, joined, then scripts/audio_master.py to -14 LUFS / -1.5 dBTP"
 }

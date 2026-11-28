@@ -32,7 +32,7 @@ export const Section: React.FC<{from: number; to: number; children: React.ReactN
 	return <div style={{position: 'absolute', inset: 0, opacity: o, transform: `scale(${s})`, transformOrigin: '50% 45%'}}>{children}</div>;
 };
 
-export const Kicker: React.FC<{text: string; at: number; x?: number; y?: number; color?: string}> = ({text, at, x = 96, y = 70, color = colors.telemetry}) => {
+export const Kicker: React.FC<{text: string; at: number; x?: number; y?: number; color?: string}> = ({text, at, x = 96, y = 82, color = colors.telemetry}) => {
 	const p = useIn(at, 12);
 	return (
 		<div style={{position: 'absolute', left: x, top: y, opacity: p, transform: `translateX(${(1 - p) * -20}px)`, display: 'flex', alignItems: 'center', gap: 16}}>
